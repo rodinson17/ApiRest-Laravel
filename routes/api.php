@@ -46,6 +46,8 @@ use App\Http\Controllers\Transaction\TransactionSellerController;
 //Route::resource('buyers', 'Buyer\BuyerController', ['only' => ['index', 'show']]);
 
 Route::resource('users', UserController::class)->except([ 'create', 'edit' ]);
+Route::get('users/verify/{token}', [ UserController::class, 'verify' ])->name('verify');
+Route::get('users/{user}/resend', [ UserController::class, 'resend' ])->name('resend');
 
 Route::resource('buyers', BuyerController::class)->only([ 'index', 'show' ]);
 Route::resource('buyers.sellers', BuyerSellerController::class)->only([ 'index' ]);
