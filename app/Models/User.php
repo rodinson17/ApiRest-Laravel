@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Transformers\UserTransformer;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,6 +22,8 @@ class User extends Authenticatable
 
     const ADMINISTATOR = 'true';
     const REGULAR_USER = 'false';
+
+    public $transformer = UserTransformer::class; // TODO: transformar las respuestas
 
     /**
      * The attributes that are mass assignable.
