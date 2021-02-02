@@ -8,4 +8,9 @@ use Illuminate\Http\Request;
 class ApiController extends Controller
 {
     use ApiResponser; // TODO: Forma de usar un Trait
+
+    public function __construct()
+    {
+
+    }
 }
