@@ -6,6 +6,7 @@ namespace App\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection; // TODO: Se recomienda usar esta importación
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 trait ApiResponser { // TODO: Metodos response json
@@ -29,6 +30,7 @@ trait ApiResponser { // TODO: Metodos response json
         $collection = $this->sortData( $collection, $transformer );
         $collection = $this->paginate( $collection );
         $collection = $this->transformData( $collection, $transformer );
+        $collection = $this->cacheResponse( $collection );
 
         //return $this->successResponse( [ 'data' => $collection ], $code );
         return $this->successResponse( $collection, $code );
@@ -49,7 +51,7 @@ trait ApiResponser { // TODO: Metodos response json
         return $transformation->toArray();
     }
 
-    protected function sortData( Collection $collection, $transformer ) {
+    protected function sortData( Collection $collection, $transformer ) { // TODO: filtros
         if ( request()->has( 'sort_by' ) ) {
             $attribute = $transformer::originalAttributes( request()->sort_by );
 
@@ -70,7 +72,7 @@ trait ApiResponser { // TODO: Metodos response json
         return $collection;
     }
 
-    protected function paginate( Collection $collection ) {
+    protected function paginate( Collection $collection ) { // TODO: pagination
         $rules =  [ 'per_page' => 'integer|min:2|max:50' ];
 
         Validator::validate( request()->all(), $rules );
@@ -90,5 +92,19 @@ trait ApiResponser { // TODO: Metodos response json
         $paginated->appends( request()->all() );
 
         return $paginated;
+    }
+
+    protected function cacheResponse( $data ) { // TODO: cache
+        $url = request()->url();
+        $queryParams = request()->query();
+
+        ksort( $queryParams );
+
+        $queryString = http_build_query( $queryParams );
+        $fullUrl = "{$url}?{$queryString}";
+
+        return Cache::remember( $fullUrl, 15/60, function() use( $data ) {
+            return $data;
+        });
     }
 }
