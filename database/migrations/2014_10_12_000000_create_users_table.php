@@ -24,6 +24,8 @@ class CreateUsersTable extends Migration
             $table->string('verified')->default( User::UNVERIFIED_USER );
             $table->string('verification_token')->nullable();
             $table->string('admin')->default( User::REGULAR_USER );
+            $table->foreignId('current_team_id')->nullable();
+            $table->text('profile_photo_path')->nullable();
             $table->timestamps();
             $table->softDeletes(); // TODO: Using softDeletes, eliminacion suave
         });
